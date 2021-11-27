@@ -12,3 +12,10 @@
     `python run.py`
 
 3. Go to http://0.0.0.0:3001/
+
+
+### Description
+
+### how to run the Python scripts and web app
+
+### files in the repository
