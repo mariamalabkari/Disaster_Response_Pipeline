@@ -1,7 +1,4 @@
-#!/usr/bin/env python
-# coding: utf-8
 
-# In[ ]:
 
 
 # import libraries
@@ -28,9 +25,6 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 nltk.download(['punkt', 'wordnet', 'stopwords', 'averaged_perceptron_tagger'])
 
 
-# In[ ]:
-
-
 # load data from database
 engine = create_engine('sqlite:////content/sample_data/Database.db')
 df = pd.read_sql("SELECT * FROM DatabaseTable", engine)
@@ -39,8 +33,6 @@ X = df['message']
 Y = df.drop(['id', 'message', 'original', 'genre'], axis = 1)
 #/content/sample_data/Database.db
 
-
-# In[ ]:
 
 
 def tokenize(text):
@@ -72,8 +64,6 @@ print(X[3])
 print(tokenize(X[3]))
 
 
-# In[ ]:
-
 
 # Build a machine learning pipeline
 pipeline = Pipeline([
@@ -83,16 +73,12 @@ pipeline = Pipeline([
     ])
 
 
-# In[ ]:
-
 
 # Train pipeline
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y)
  # train classifier
 pipeline.fit(X_train, Y_train)
 
-
-# In[ ]:
 
 
 # Test your model
@@ -105,8 +91,6 @@ for ix, col in enumerate(Y.columns):
 avg = (Y_pred == Y_test).mean().mean()
 print("Accuracy Overall:\n", avg)
 
-
-# In[ ]:
 
 
 # Improve model
@@ -122,8 +106,6 @@ cv = GridSearchCV(pipeline, param_grid=parameters, verbose=10)
 cv.fit(X_train, Y_train)
 
 
-# In[ ]:
-
 
 # test model
 
@@ -135,8 +117,6 @@ for ix, col in enumerate(Y.columns):
 avg = (Y_pred == Y_test).mean().mean()
 print("Accuracy Overall:\n", avg)
 
-
-# In[ ]:
 
 
 # improve model
@@ -160,14 +140,10 @@ np.random.seed(77)
 T_model2 = cv2.fit(X_train, Y_train)
 
 
-# In[ ]:
-
 
 # grid search results
 T_model2.cv_results_
 
-
-# In[ ]:
 
 
 # Calculate evaluation metrics for test set
@@ -177,8 +153,6 @@ eval_metrics2 = eval_metrics(np.array(Y_test), tuned_pred_test2, col_names)
 
 print(eval_metrics2)
 
-
-# In[ ]:
 
 
 # Export model as a pickle file
