@@ -1,8 +1,3 @@
-#!/usr/bin/env python
-# coding: utf-8
-
-# In[ ]:
-
 
 # import libraries
 import pandas as pd
@@ -13,15 +8,9 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-# In[ ]:
-
-
 # load messages dataset
 messages = pd.read_csv('disaster_messages.csv')
 messages.head()
-
-
-# In[ ]:
 
 
 # load categories dataset
@@ -29,23 +18,16 @@ categories = pd.read_csv('disaster_categories.csv')
 categories.head()
 
 
-# In[ ]:
-
 
 # merge datasets
 df = messages.merge(categories, on = ['id'])
 df.head()
 
 
-# In[ ]:
-
 
 # create a dataframe of the 36 individual category columns
 categories = df['categories'].str.split(';', expand = True)
 categories.head()
-
-
-# In[ ]:
 
 
 # select the first row of the categories dataframe
@@ -58,15 +40,11 @@ category_colnames = row.transform(lambda x: x[:-2]).tolist()
 print(category_colnames)
 
 
-# In[ ]:
-
 
 # rename the columns of `categories`
 categories.columns = category_colnames
 categories.head()
 
-
-# In[ ]:
 
 
 # Convert category values to just numbers 0 or 1
@@ -79,8 +57,6 @@ for column in categories:
 categories.head()
 
 
-# In[ ]:
-
 
 # drop the original categories column from `df`
 df.drop('categories', axis = 1, inplace = True)
@@ -88,36 +64,25 @@ df.drop('categories', axis = 1, inplace = True)
 df.head()
 
 
-# In[ ]:
-
 
 # concatenate the original dataframe with the new `categories` dataframe
 df = pd.concat([df, categories], axis = 1)
 df.head()
 
 
-# In[ ]:
-
 
 # check number of duplicates
 sum(df.duplicated())
 
-
-# In[ ]:
 
 
 # drop duplicates
 df.drop_duplicates(inplace = True)
 
 
-# In[ ]:
-
-
 # check number of duplicates
 sum(df.duplicated())
 
-
-# In[ ]:
 
 
 engine = create_engine('sqlite:///Database.db')
