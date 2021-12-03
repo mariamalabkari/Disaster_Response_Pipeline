@@ -1,7 +1,8 @@
 import json
 import plotly
 import pandas as pd
-
+import numpy as np
+import re
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import word_tokenize
 
@@ -15,6 +16,7 @@ from sqlalchemy import create_engine
 app = Flask(__name__)
 
 def tokenize(text):
+    text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     tokens = word_tokenize(text)
     lemmatizer = WordNetLemmatizer()
 
@@ -26,11 +28,11 @@ def tokenize(text):
     return clean_tokens
 
 # load data
-engine = create_engine('sqlite:///../data/Database.db')
-df = pd.read_sql_table('DatabaseTable', engine)
+engine = create_engine('sqlite:///../data/CleanDatabase.db')
+df = pd.read_sql_table('CleanTable', engine)
 
 # load model
-model = joblib.load("../models/classifier.pkl")
+model = joblib.load("../models/cv_AdaBoost.pkl")
 
 
 # index webpage displays cool visuals and receives user input text for model
@@ -43,7 +45,6 @@ def index():
     genre_counts = df.groupby('genre').count()['message']
     genre_names = list(genre_counts.index)
     
-    
     # Show distribution of different category
     category = list(df.columns[4:])
     category_counts = []
@@ -54,7 +55,7 @@ def index():
     categories = df.iloc[:,4:]
     categories_mean = categories.mean().sort_values(ascending=False)[1:11]
     categories_names = list(categories_mean.index)
-    
+      
     # create visuals
     # TODO: Below is an example - modify to create your own visuals
     graphs = [
@@ -75,8 +76,45 @@ def index():
                     'title': "Genre"
                 }
             }
+        },
+        {
+            'data': [
+                Bar(
+                    x=category,
+                    y=category_counts
+                )
+            ],
+
+            'layout': {
+                'title': 'The Distribution of Messages Categories',
+                'yaxis': {
+                    'title': "Count"
+                },
+                'xaxis': {
+                    'title': "Category"
+                }
+            }
+        },
+         {
+            'data': [
+                Bar(
+                    x=categories_names,
+                    y=categories_mean
+                )
+            ],
+
+            'layout': {
+                'title': 'Top 10 Message Categories',
+                'yaxis': {
+                    'title': "Percentage"
+                },
+                'xaxis': {
+                    'title': "Categories"
+                }
+            }
         }
     ]
+        
     
     # encode plotly graphs in JSON
     ids = ["graph-{}".format(i) for i, _ in enumerate(graphs)]
